@@ -112,11 +112,11 @@ module Webpush
     end
 
     def expiration
-      @vapid_options.fetch(:expiration, 24 * 60 * 60)
+      @vapid_options.fetch(:expiration, 12 * 60 * 60)
     end
 
     def subject
-      @vapid_options.fetch(:subject, 'sender@example.com')
+      @vapid_options.fetch(:subject, 'mailto:sender@example.com')
     end
 
     def vapid_public_key
@@ -175,7 +175,7 @@ module Webpush
         raise Unauthorized.new(resp, uri.host)
       elsif resp.is_a?(Net::HTTPRequestEntityTooLarge) # 413
         raise PayloadTooLarge.new(resp, uri.host)
-      elsif resp.is_a?(Net::HTTPTooManyRequests) # 429, try again later!
+      elsif resp.is_a?(Net::HTTPTooManyRequests) || resp.is_a?(Net::HTTPNotAcceptable) # 429, try again later! or 406 from Microsoft
         raise TooManyRequests.new(resp, uri.host)
       elsif resp.is_a?(Net::HTTPServerError) # 5xx
         raise PushServiceError.new(resp, uri.host)

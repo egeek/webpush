@@ -81,8 +81,15 @@ module Webpush
       ])
 
       public_key = OpenSSL::PKey::EC.new(asn1.to_der)
+      private_key_to_pem + public_key_to_pem
+    end
 
-      curve.to_pem + public_key.to_pem
+    def private_key_to_pem
+      curve.to_pem
+    end
+
+    def public_key_to_pem
+      curve.public_to_pem
     end
 
     def inspect
